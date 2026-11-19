@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sign: Ownership Transfer Packet | Sun School of Satoshi LLC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600;700&family=DM+Mono:wght@400;500&family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root{
+  --navy:#101426; --navy2:#171d36; --navy3:#2a3358; --gold:#f2b53a; --gold2:#ffd27a;
+  --paper:#fcfaf4; --ink:#1b1b1f; --muted:#8d97b8; --ok:#3ecf8e; --bad:#ff6b6b;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--navy);color:#e8ebf5;font-family:'Barlow',system-ui,sans-serif;line-height:1.5}
+.top{background:var(--navy2);border-bottom:2px solid var(--gold);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand{font-family:'Barlow Condensed',sans-serif;font-size:26px;letter-spacing:2px;color:var(--gold)}
+.brand small{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:1px;margin-left:10px}
+.steps{display:flex;gap:8px;font-family:'DM Mono',monospace;font-size:12px}
+.step{padding:5px 12px;border:1px solid var(--navy3);border-radius:20px;color:var(--muted)}
+.step.on{border-color:var(--gold);color:var(--gold)}
+.step.fin{background:var(--gold);border-color:var(--gold);color:#1a1200;font-weight:600}
+.wrap{max-width:860px;margin:0 auto;padding:22px 14px 60px}
+.banner{border:1px solid var(--gold);background:rgba(242,181,58,.08);border-radius:8px;padding:12px 16px;margin-bottom:18px;font-size:15px}
+.banner.warn{border-color:var(--bad);background:rgba(255,107,107,.08)}
+.banner b{color:var(--gold2)}
+.paper{background:var(--paper);color:var(--ink);border-radius:4px;padding:48px 52px;box-shadow:0 10px 40px rgba(0,0,0,.5);font-family:'Times New Roman',Georgia,serif;font-size:16.5px;line-height:1.55}
+.paper .org{text-align:center;font-weight:700;font-size:24px;letter-spacing:2px}
+.paper .ttl{text-align:center;font-weight:700;font-size:18px;margin:4px 0 6px}
+.paper .sub{text-align:center;font-size:14.5px;color:#444;margin-bottom:18px;border-bottom:1px solid #bbb;padding-bottom:14px}
+.paper h3{font-size:18px;margin:30px 0 6px;letter-spacing:.5px;border-top:2px solid #222;padding-top:14px}
+.paper h3.first{border-top:0;margin-top:14px;padding-top:0}
+.paper h5{font-size:15.5px;margin:16px 0 6px}
+.paper p{margin:0 0 8px;text-align:justify}
+.paper ol{margin:0 0 8px;padding-left:24px}
+.paper li{margin:0 0 6px;text-align:justify}
+.paper table{width:100%;border-collapse:collapse;margin:6px 0 12px;font-size:14.5px}
+.paper th,.paper td{border:1px solid #bbb;padding:6px 8px;text-align:left;vertical-align:top}
+.paper th{background:#f0ece0}
+.fld{display:inline-block;min-width:90px;border-bottom:1.5px solid #222;padding:0 6px;font-weight:700;color:#0b2a8a;text-align:center}
+.fld.empty{color:#999;font-weight:400}
+.box{display:inline-block;width:15px;height:15px;border:1.5px solid #222;text-align:center;line-height:12px;font-size:14px;font-weight:700;margin-right:4px;vertical-align:-2px}
+.chkline{margin:0 0 6px 6px}
+.sigrow{display:grid;grid-template-columns:230px 1fr 150px;gap:14px;align-items:end;margin:14px 0}
+.sigrow .nm{font-size:15px}
+.sigrow .nm i{display:block;font-size:12.5px;color:#666}
+.sigrow .ln{border-bottom:1.5px solid #222;height:56px;display:flex;align-items:flex-end}
+.sigrow .ln img{height:52px}
+.sigrow .ln span.pending{font-size:12px;color:#999;font-family:'DM Mono',monospace;padding-bottom:3px}
+.sigrow .dt{border-bottom:1.5px solid #222;height:28px;font-size:14.5px;display:flex;align-items:flex-end;justify-content:center}
+.after{margin-top:20px;background:var(--navy2);border:1px solid var(--navy3);border-radius:8px;padding:16px 20px}
+.after h4{margin:0 0 6px;font-family:'Barlow Condensed',sans-serif;letter-spacing:1.5px;font-size:20px;color:var(--gold)}
+.after table{width:100%;border-collapse:collapse;font-size:14px}
+.after td,.after th{border-top:1px solid var(--navy3);padding:6px 8px;text-align:left;vertical-align:top;color:#cfd5ea}
+.after th{color:var(--muted);font-family:'DM Mono',monospace;font-size:12px}
+.panel{background:var(--navy2);border:1px solid var(--navy3);border-radius:8px;padding:22px 24px;margin-top:22px}
+.panel h2{font-family:'Barlow Condensed',sans-serif;letter-spacing:1.5px;font-size:28px;margin:0 0 4px;color:var(--gold)}
+.panel h3{font-family:'Barlow Condensed',sans-serif;letter-spacing:1.2px;font-size:20px;margin:22px 0 2px;color:var(--gold2)}
+.panel p.hint{color:var(--muted);font-size:14.5px;margin:0 0 14px}
+label{display:block;font-size:13px;font-family:'DM Mono',monospace;color:var(--muted);margin:12px 0 4px;letter-spacing:.5px}
+input[type=text],input[type=email],input[type=date],input[type=number],select{width:100%;background:var(--navy);border:1px solid var(--navy3);border-radius:6px;color:#fff;padding:11px 12px;font:inherit;font-size:16px}
+input:focus,select:focus{outline:2px solid var(--gold);border-color:var(--gold)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.schrow{display:grid;grid-template-columns:150px 1fr 1fr 1fr;gap:10px;align-items:center;margin:6px 0}
+.schrow span{font-size:14px;color:#cfd5ea}
+.schrow input{padding:8px 10px;font-size:14.5px}
+.tabs{display:flex;gap:6px;margin:12px 0 8px}
+.tab{background:var(--navy);border:1px solid var(--navy3);color:var(--muted);padding:8px 18px;border-radius:6px;cursor:pointer;font:inherit;font-weight:600}
+.tab.on{border-color:var(--gold);color:var(--gold)}
+.sigbox{background:#fff;border-radius:6px;position:relative;border:2px dashed #b9b9c4}
+.sigbox canvas{display:block;width:100%;height:auto;touch-action:none;cursor:crosshair}
+.sigbox .x{position:absolute;left:14px;bottom:26px;font-family:'DM Mono',monospace;color:#999;font-size:18px;pointer-events:none}
+.typed{background:#fff;border-radius:6px;border:2px dashed #b9b9c4;color:#0b1a55;font-family:'Dancing Script',cursive;font-size:56px;padding:6px 18px;min-height:110px;display:flex;align-items:center;overflow:hidden;white-space:nowrap}
+.chk{display:flex;gap:10px;align-items:flex-start;margin:14px 0;font-size:15px;cursor:pointer;font-family:'Barlow',sans-serif;color:#e8ebf5;letter-spacing:0}
+.chk input{margin-top:5px;width:18px;height:18px;accent-color:var(--gold);flex:none}
+.btn{background:var(--gold);color:#1a1200;border:0;border-radius:6px;padding:14px 26px;font-family:'Barlow Condensed',sans-serif;font-size:22px;letter-spacing:1.5px;cursor:pointer}
+.btn:hover{background:var(--gold2)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.ghost{background:transparent;color:var(--gold);border:1px solid var(--gold);font-size:17px;padding:8px 16px}
+.small{font-size:13px;color:var(--muted)}
+.err{color:var(--bad);font-size:14.5px;margin-top:10px;min-height:20px}
+.ok{color:var(--ok)}
+.linkrow{display:flex;gap:8px;align-items:center;margin:8px 0;flex-wrap:wrap}
+.linkrow span{min-width:190px;font-size:15px}
+.linkrow input{flex:1;min-width:200px;font-family:'DM Mono',monospace;font-size:12.5px}
+.foot{text-align:center;color:var(--muted);font-size:12.5px;margin-top:30px;font-family:'DM Mono',monospace}
+.foot a{color:var(--muted);cursor:pointer;text-decoration:underline}
+.hidden{display:none!important}
+.done{text-align:center;padding:30px 10px}
+.done .big{font-family:'Barlow Condensed',sans-serif;font-size:44px;color:var(--ok);letter-spacing:2px}
+.status{background:var(--navy2);border:1px solid var(--navy3);border-radius:8px;padding:14px 18px;margin-bottom:18px}
+.status h4{margin:0 0 8px;font-family:'Barlow Condensed',sans-serif;letter-spacing:1.5px;font-size:20px;color:var(--gold)}
+.srow{display:flex;justify-content:space-between;gap:10px;padding:5px 0;border-top:1px solid var(--navy3);font-size:15px}
+.srow:first-of-type{border-top:0}
+.srow .y{color:var(--ok);font-family:'DM Mono',monospace;font-size:13px}
+.srow .n{color:var(--muted);font-family:'DM Mono',monospace;font-size:13px}
+.banner.good{border-color:var(--ok);background:rgba(62,207,142,.1)}
+@media(max-width:640px){.paper{padding:26px 20px;font-size:15px}.sigrow{grid-template-columns:1fr}.row,.row3{grid-template-columns:1fr}.schrow{grid-template-columns:1fr}.typed{font-size:42px}}
+@media print{body{background:#fff}.top,.panel,.banner,.foot,.status,.after{display:none!important}.paper{box-shadow:none}}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="brand">SUN SCHOOL OF SATOSHI <small>SECURE E-SIGN</small></div>
+  <div class="steps"><span class="step on" id="st1">1 REVIEW</span><span class="step" id="st2">2 SIGN</span><span class="step" id="st3">3 DONE</span></div>
+</div>
+
+<div class="wrap">
+  <div id="banner"></div>
+  <div class="status" id="status"></div>
+  <div class="paper" id="paper"></div>
+
+  <!-- SIGN PANEL -->
+  <div class="panel" id="signPanel">
+    <h2>Sign this packet</h2>
+    <p class="hint">Read all four parts above, then adopt your signature below. One signature is applied to every signature line that belongs to you.</p>
+
+    <label for="signerSel">WHO IS SIGNING?</label>
+    <select id="signerSel"></select>
+
+    <label for="signerEmail">YOUR EMAIL</label>
+    <input type="email" id="signerEmail" placeholder="you@email.com" autocomplete="email">
+
+    <label>YOUR SIGNATURE</label>
+    <div class="tabs">
+      <button class="tab on" id="tabType" type="button">Type it</button>
+      <button class="tab" id="tabDraw" type="button">Draw it</button>
+    </div>
+    <div id="typeWrap">
+      <input type="text" id="typedName" placeholder="Type your full name">
+      <div class="typed" id="typedPreview" style="margin-top:10px"></div>
+    </div>
+    <div id="drawWrap" class="hidden">
+      <div class="sigbox"><canvas id="pad" width="720" height="200"></canvas><div class="x">✕</div></div>
+      <div class="linkrow"><button class="btn ghost" type="button" id="clearPad">Clear</button><span class="small">Use your finger, mouse or trackpad.</span></div>
+    </div>
+
+    <label class="chk"><input type="checkbox" id="c1"><span id="c1text">I have read all four parts of this packet and I am signing freely.</span></label>
+    <label class="chk"><input type="checkbox" id="c2"><span>I agree to sign electronically. I understand my typed or drawn signature has the same effect as my handwritten signature on this packet.</span></label>
+
+    <button class="btn" id="signBtn" type="button">ADOPT &amp; SIGN</button>
+    <div class="err" id="err"></div>
+  </div>
+
+  <!-- DONE PANEL -->
+  <div class="panel hidden" id="donePanel">
+    <div class="done">
+      <div class="big">SIGNED ✓</div>
+      <p id="doneMsg">Your signature has been recorded.</p>
+      <button class="btn" id="dlBtn" type="button">DOWNLOAD SIGNED PDF</button>
+      <p class="small" style="margin-top:14px">Keep this PDF for your records.</p>
+    </div>
+  </div>
+
+  <div id="afterBox"></div>
+
+  <!-- ADMIN PANEL -->
+  <div class="panel hidden" id="adminPanel">
+    <h2>Administrator – prepare &amp; send</h2>
+    <p class="hint">Fill in the blanks from the packet, then click “Create signing links”. Send each person their personal link (their name is pre-selected). Open this page from where it is hosted online (not from your Downloads folder) before copying links.</p>
+
+    <h3>PART 1 – ASSIGNMENT</h3>
+    <div class="row">
+      <div><label for="aDate">EFFECTIVE DATE</label><input type="date" id="aDate"></div>
+      <div><label for="aPrice">PRICE (CHECK ONE)</label>
+        <select id="aPrice"><option value="">— choose —</option><option value="pay">Assignee pays an amount</option><option value="gift">Gift, no payment</option><option value="other">Other terms</option></select></div>
+    </div>
+    <div id="aPayWrap" class="row3 hidden">
+      <div><label for="aAmount">AMOUNT ($)</label><input type="text" id="aAmount"></div>
+      <div><label for="aPayDate">PAYMENT DATE</label><input type="date" id="aPayDate"></div>
+      <div><label for="aMethod">METHOD</label><input type="text" id="aMethod" placeholder="e.g. bank transfer"></div>
+    </div>
+    <div id="aOtherWrap" class="hidden"><label for="aOther">OTHER TERMS</label><input type="text" id="aOther"></div>
+    <div class="row">
+      <div><label for="aIsunAddr">ISUN JONES-BOLER – ADDRESS</label><input type="text" id="aIsunAddr"></div>
+      <div><label for="aJustinAddr">JUSTIN ALLEN – ADDRESS</label><input type="text" id="aJustinAddr"></div>
+    </div>
+    <label for="aDebts">COMPANY DEBTS KNOWN TO THE ASSIGNOR (or “none”)</label>
+    <input type="text" id="aDebts" value="none">
+
+    <h3>PART 2 – RESIGNATION &amp; APPOINTMENT</h3>
+    <label for="aOffice">COMPANY PRINCIPAL OFFICE &amp; REGISTERED AGENT ADDRESS (Illinois street address, city, IL, ZIP)</label>
+    <input type="text" id="aOffice">
+
+    <h3>PART 3 – RELEASE</h3>
+    <label for="aProfits">AMOUNTS ISUN IS STILL OWED FROM THE COMPANY (or “none”)</label>
+    <input type="text" id="aProfits" value="none">
+
+    <h3>PART 4 – IP &amp; ACCOUNTS</h3>
+    <div class="row3">
+      <div><label for="aAcctDate">ACCOUNT CONTROL HANDED OVER BY</label><input type="date" id="aAcctDate"></div>
+      <div><label for="aDays1">FILE HANDOVER (DAYS)</label><input type="number" id="aDays1" min="1" value="14"></div>
+      <div><label for="aDays2">COMPANY MONEY RETURNED (DAYS)</label><input type="number" id="aDays2" min="1" value="14"></div>
+    </div>
+    <label for="aOwed">AMOUNTS OWED BETWEEN ISUN AND THE COMPANY (or “none”)</label>
+    <input type="text" id="aOwed" value="none">
+    <label>SCHEDULE 1 – WHERE HELD / WHO CONTROLS NOW / HANDOVER DATE</label>
+    <div id="aSch"></div>
+    <label for="aKeep">SCHEDULE 2 – ITEMS ISUN KEEPS (or “none”)</label>
+    <input type="text" id="aKeep" value="none">
+    <label for="aLic">SCHEDULE 2 – LICENSE TO THE COMPANY</label>
+    <input type="text" id="aLic" placeholder="terms, or “n/a” if none">
+
+    <div style="margin-top:18px"><button class="btn ghost" type="button" id="aBuild">Create signing links</button></div>
+    <div class="err" id="aErr"></div>
+    <div id="aLinks"></div>
+    <p class="small" id="aKeyNote"></p>
+  </div>
+
+  <div class="foot">© Sun School of Satoshi LLC · Illinois limited liability company · <a id="adminToggle">Administrator</a></div>
+</div>
+
+<script type="module">
+/* =====================================================================
+   SETUP (two things, both free)
+   1) Web3Forms key  -> emails a copy of every signature to the address the key is registered to
+   2) Firebase config -> shared storage so each signer sees earlier signers
+
+   Use a NEW Firebase project (or a new web app in an existing one) for
+   Sun School. Firestore rules to paste in Firebase (Firestore Database > Rules):
+
+   rules_version = '2';
+   service cloud.firestore {
+     match /databases/{database}/documents {
+       match /packets/{pid}/signatures/{sid} {
+         allow read: if true;
+         allow create: if sid in ['isun','justin']
+                       && request.resource.data.keys().hasOnly(['name','role','sigImage','dateText','iso','method','hash'])
+                       && request.resource.data.sigImage.size() < 200000;
+         allow update, delete: if false;
+       }
+     }
+   }
+   ===================================================================== */
+const WEB3FORMS_KEY = "4e5cac48-b7b3-4575-8e4c-d09f7ad38145";
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyAGaU1Mg8qcmilW4yhlTCPclCeuUeBu5O8",
+  authDomain: "sun-school-esign.firebaseapp.com",
+  projectId: "sun-school-esign",
+  storageBucket: "sun-school-esign.firebasestorage.app",
+  messagingSenderId: "861244659871",
+  appId: "1:861244659871:web:f29eaffe029a1fbc412aaa"
+};
+
+const fbReady = !String(FIREBASE_CONFIG.apiKey).startsWith("YOUR_");
+const w3Ready = !String(WEB3FORMS_KEY).startsWith("YOUR_");
+let db = null, getFirestore, collection, doc, setDoc, onSnapshot;
+if (fbReady) {
+  try {
+    const A = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js");
+    const F = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+    ({collection, doc, setDoc, onSnapshot} = F);
+    db = F.getFirestore(A.initializeApp(FIREBASE_CONFIG));
+  } catch(e) { console.error(e); }
+}
+
+const SIGNERS = [
+  {id:"isun",  name:"Isun Jones-Boler", role:"Assignor / Resigning Manager",
+   consent:"I have read all four parts of this packet and I am signing freely, as Assignor, resigning manager and registered agent."},
+  {id:"justin",name:"Justin Allen", role:"Assignee / Member / Manager",
+   consent:"I have read all four parts of this packet. I am signing for myself as Assignee and as sole Member, and for Sun School of Satoshi LLC as its Manager."}
+];
+const SCH_ITEMS = [
+  ["Domain name(s)","registrar"],
+  ["Website and hosting","provider"],
+  ["Course platform / payment processor","provider"],
+  ["Social media accounts","platforms and handles"],
+  ["Course files, slides, videos","where stored"],
+  ["Student and customer lists","where stored"]
+];
+const DEFAULT_CFG = {id:"",date:"",price:"",amount:"",payDate:"",method:"",other:"",isunAddr:"",justinAddr:"",debts:"none",
+  office:"",profits:"none",acctDate:"",days1:"14",days2:"14",owed:"none",
+  sch:SCH_ITEMS.map(()=>["","",""]),keep:"none",lic:""};
+
+const HEAD = {
+  org:"SUN SCHOOL OF SATOSHI LLC",
+  title:"OWNERSHIP TRANSFER PACKET",
+  sub:"Illinois limited liability company | File number 17329278 | Filed January 21, 2026",
+  intro:"This packet moves 100% ownership of Sun School of Satoshi LLC (Illinois file number 17329278) from Isun Jones-Boler (the \"Assignor\") to Justin Allen (the \"Assignee\"). It has four parts, each signed where shown. Parts 1 to 4 are signed on the same day. The new Operating Agreement is signed at the same time. The Assignor's signature on these papers should be made freely."
+};
+
+/* Document blocks. ‹key› = filled-in blank. t: h=part heading, p=paragraph, li=numbered item,
+   chk=checkbox line, tbl=table, sig=signature line, h5=sub-heading */
+function blocks(c){
+  const B=[];
+  const h=(x,first)=>B.push({t:"h",x,first}), p=x=>B.push({t:"p",x}), li=(b,x)=>B.push({t:"li",b,x}),
+        sig=(who,id,cap)=>B.push({t:"sig",who,id,cap}), chk=(on,x)=>B.push({t:"chk",on,x});
+  h("Part 1. Assignment of Membership Interest",true);
+  p("<b>Date:</b> ‹date› (the \"Effective Date\")");
+  p("<b>Parties.</b> Isun Jones-Boler, ‹isunAddr› (the \"Assignor\"), who signed the Articles of Organization as \"Isun Jones,\" and Justin Allen, ‹justinAddr› (the \"Assignee\").");
+  p("<b>Background.</b> The Assignor owns 100% of the membership interests in Sun School of Satoshi LLC, an Illinois limited liability company, file number 17329278, filed January 21, 2026 (the \"Company\").");
+  li("Assignment.","The Assignor assigns and transfers to the Assignee all of the Assignor's rights in the Company, including the 100% membership interest, the right to profits and distributions, the capital account, voting rights, and the right to inspect records (the \"Interest\").");
+  B.push({t:"li",b:"Price.",x:"(Check one.)"});
+  chk(c.price==="pay","The Assignee pays $‹amount› on ‹payDate› by ‹method›.");
+  chk(c.price==="gift","The Assignor gives the Interest as a gift, with no payment.");
+  chk(c.price==="other","Other terms: ‹other›");
+  li("Assignor's statements.","The Assignor states that: (a) the Assignor is the sole owner of the Interest; (b) it has no liens, pledges, or claims against it; (c) no one else has a right to buy or receive it; (d) the Assignor has authority to make this transfer and signs freely; and (e) the Company has no debts known to the Assignor except: ‹debts›.");
+  li("Acceptance.","The Assignee accepts the Interest, signs the Company's new Operating Agreement on the Effective Date, and becomes its sole Member.");
+  li("Debts.","The Assignee is responsible for the Company's debts and obligations from the Effective Date. The Assignor is not responsible for debts the Company takes on after that date.");
+  li("Further steps.","Each person will sign other papers reasonably needed to complete this transfer.");
+  li("Law and signatures.","Illinois law governs. Signatures may be on paper or electronic, and copies count as originals.");
+  sig("Assignor: Isun Jones-Boler","isun");
+  sig("Assignee: Justin Allen","justin");
+
+  h("Part 2. Resignation and appointment");
+  li("Manager.","Isun Jones-Boler resigns as manager of Sun School of Satoshi LLC, effective on the Effective Date.");
+  li("Registered agent.","Isun Jones-Boler (named \"Isun Jones\" in the Articles) resigns as the Company's registered agent, effective when the Illinois Secretary of State records Justin Allen as the replacement. Until then, Isun will send any legal papers received for the Company to Justin Allen within two days.");
+  li("Appointments.","Justin Allen, as sole Member, appoints himself Manager. He also appoints himself as the Company's new registered agent, at ‹office›.");
+  li("Office address.","The Company's principal office is ‹office›. This corrects the filed Articles, which show the state as \"AL.\"");
+  sig("Resigning: Isun Jones-Boler","isun");
+  sig("Appointing: Justin Allen, Member","justin");
+
+  h("Part 3. Release and confirmation of no remaining interest");
+  p("This Part helps show that Isun Jones-Boler, a director of Building 4 Our Future, no longer has a financial interest in or control over Sun School of Satoshi LLC. Isun Jones-Boler confirms, as of the Effective Date:");
+  li("","Isun owns no interest of any kind in the Company, directly or through another person or company.");
+  li("","Isun holds no office, management role, or job with the Company and cannot sign for it or use its accounts.");
+  li("","Isun has no right to profits, distributions, royalties, bonuses, or loans from the Company, except: ‹profits›.");
+  li("","Isun will not direct or control the Company's decisions, and no family member of Isun holds an interest in or role with the Company.");
+  li("","Isun will tell the Building 4 Our Future board in writing about this transfer and will keep the Conflict of Interest Policy statement current.");
+  li("Release.","Isun releases the Company and Justin Allen from claims about Isun's past ownership or management of the Company, except rights created by this packet. Justin Allen and the Company release Isun from claims about Isun's management of the Company before the Effective Date, except for fraud or willful misconduct.");
+  li("","These statements are true and complete. Isun understands that the Building 4 Our Future board and the IRS may rely on them.");
+  sig("Confirmed: Isun Jones-Boler","isun");
+  sig("Acknowledged: Justin Allen","justin");
+
+  h("Part 4. Intellectual property and accounts transition");
+  p("<b>Parties.</b> Isun Jones-Boler, Justin Allen, and Sun School of Satoshi LLC (the \"Company\").");
+  li("Assignment of materials.","Isun assigns to the Company all rights in the Sun School of Satoshi name and logos, domain names, social media accounts, websites, courses, lessons, slides, videos, workbooks, student and customer lists, and other materials Isun created for or used in the business (the \"Materials\"), listed in Schedule 1.");
+  li("Items Isun keeps.","Only items listed in Schedule 2 stay with Isun, on the license terms written there. If Schedule 2 is empty, Isun keeps nothing.");
+  li("Accounts.","By ‹acctDate›, Isun gives Justin Allen administrator control of every account used for the business, listed in Schedule 1. Passwords are handed over through a password manager or by resetting access, and are never written in this packet.");
+  li("Handover.","Within ‹days1› days, Isun gives Justin copies of all files, lists, contracts, and records for the business, then removes personal access.");
+  li("Money.","Any Company money held in a personal account goes to the Company's account within ‹days2› days. Amounts owed between Isun and the Company on the Effective Date: ‹owed›.");
+  li("Student and customer data.","Isun keeps this information private and does not use it for any other business.");
+  li("Public statements.","Each person will describe the change in ownership accurately.");
+  B.push({t:"h5",x:"Schedule 1: Materials and accounts transferred"});
+  B.push({t:"tbl",head:["Item","Where it is held","Who controls it now","Handover date"],
+    rows:SCH_ITEMS.map((it,i)=>[it[0],"‹s"+i+"a›","‹s"+i+"b›","‹s"+i+"c›"])});
+  B.push({t:"h5",x:"Schedule 2: Items Isun keeps and the license terms"});
+  B.push({t:"tbl",head:["Item","License to the Company"],rows:[["‹keep›","‹lic›"]]});
+  sig("Isun Jones-Boler","isun");
+  sig("Justin Allen","justin");
+  sig("Sun School of Satoshi LLC, by: Justin Allen, Manager","justin","Manager");
+  return B;
+}
+
+/* ---------- helpers ---------- */
+const $ = id => document.getElementById(id);
+const esc = s => String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const b64e = o => btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+const b64d = s => { s=s.replace(/-/g,"+").replace(/_/g,"/"); while(s.length%4)s+="="; return JSON.parse(decodeURIComponent(escape(atob(s)))); };
+const fmtDate = iso => { if(!iso) return ""; const d=new Date(iso+"T12:00:00"); return isNaN(d)?iso:d.toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"}); };
+const todayStr = () => new Date().toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"});
+const rid8 = () => Array.from(crypto.getRandomValues(new Uint8Array(6))).map(b=>b.toString(36).padStart(2,"0")).join("").slice(0,10);
+
+let cfg = null, sigs = {}, justDone = false, sigMode = "type", unsub = null, netErr = "";
+
+function loadCfg(){
+  cfg = null;
+  const m = location.hash.match(/d=([A-Za-z0-9_-]+)/);
+  if(m){ try{ cfg = b64d(m[1]); }catch(e){ cfg=null; } }
+  if(!cfg) cfg = JSON.parse(JSON.stringify(DEFAULT_CFG));
+  if(!cfg.sch) cfg.sch = DEFAULT_CFG.sch;
+}
+const cfgReady = c => !!(c && c.id && c.date && c.price && c.isunAddr && c.justinAddr && c.office
+  && (c.price!=="pay" || (c.amount && c.payDate && c.method)) && (c.price!=="other" || c.other));
+const rid = () => "sunschool-transfer-" + String(cfg.id).replace(/[^A-Za-z0-9]/g,"");
+const signerName = s => s.name;
+
+function listen(){
+  if(unsub){ unsub(); unsub=null; }
+  sigs = {}; netErr = "";
+  if(!fbReady || !db || !cfgReady(cfg)) return;
+  unsub = onSnapshot(collection(db,"packets",rid(),"signatures"),
+    snap=>{ const m={}; snap.forEach(d=>{ m[d.id]=d.data(); }); sigs=m; netErr=""; refreshState(); },
+    e=>{ console.error(e); netErr="Could not load earlier signatures. Check the Firebase setup."; refreshState(); });
+}
+
+/* ---------- value lookup for blanks ---------- */
+function valueOf(k,c){
+  if(/^s\d[abc]$/.test(k)){ const r=c.sch&&c.sch[+k[1]]; const v=r?r["abc".indexOf(k[2])]:""; return k[2]==="c"?fmtDate(v):v; }
+  switch(k){
+    case "date": return fmtDate(c.date);
+    case "payDate": return fmtDate(c.payDate);
+    case "acctDate": return fmtDate(c.acctDate);
+    default: return c[k]||"";
+  }
+}
+function fillHtml(s,c){ return s.replace(/‹(\w+)›/g,(m,k)=>{ const v=valueOf(k,c); return v?`<span class="fld">${esc(v)}</span>`:`<span class="fld empty">__________</span>`; }); }
+function fillText(s,c){ return s.replace(/<\/?b>/g,"").replace(/‹(\w+)›/g,(m,k)=>valueOf(k,c)||"__________"); }
+const boxHtml = on => `<span class="box">${on?"X":""}</span>`;
+
+/* ---------- document (HTML) ---------- */
+function renderDoc(){
+  const c = cfg || {};
+  let h = `<div class="org">${esc(HEAD.org)}</div><div class="ttl">${esc(HEAD.title)}</div><div class="sub">${esc(HEAD.sub)}</div><p>${esc(HEAD.intro)}</p>`;
+  let open=false;
+  const closeOl=()=>{ if(open){ h+="</ol>"; open=false; } };
+  blocks(c).forEach(b=>{
+    if(b.t==="li"){ if(!open){ h+="<ol>"; open=true; } h+=`<li>${b.b?`<b>${esc(b.b)}</b> `:""}${fillHtml(esc(b.x).replace(/‹/g,"‹"),c)}</li>`; return; }
+    if(b.t==="chk"){ h+=`<div class="chkline">${boxHtml(b.on)} ${fillHtml(esc(b.x),c)}</div>`; return; }
+    closeOl();
+    if(b.t==="h") h+=`<h3 class="${b.first?"first":""}">${esc(b.x)}</h3>`;
+    else if(b.t==="h5") h+=`<h5>${esc(b.x)}</h5>`;
+    else if(b.t==="p") h+=`<p>${fillHtml(b.x.replace(/&/g,"&amp;"),c)}</p>`;
+    else if(b.t==="tbl") h+=`<table><tr>${b.head.map(x=>`<th>${esc(x)}</th>`).join("")}</tr>${b.rows.map(r=>`<tr>${r.map(x=>`<td>${fillHtml(esc(x),c)}</td>`).join("")}</tr>`).join("")}</table>`;
+    else if(b.t==="sig"){
+      const r=sigs[b.id];
+      h+=`<div class="sigrow"><div class="nm">${fillHtml(esc(b.who),c)}</div><div class="ln">${r?`<img alt="signature" src="${esc(r.sigImage)}">`:`<span class="pending">Awaiting signature</span>`}</div><div class="dt">${r?esc(r.dateText):""}</div></div>`;
+    }
+  });
+  closeOl();
+  $("paper").innerHTML = h;
+}
+
+function afterHtml(){
+  const rows=[
+    ["Amend the manager and registered agent with the Illinois Secretary of State at ilsos.gov (check the current fee and whether to use an amendment or the annual report)","Justin Allen, or Isun before leaving","Within 30 days"],
+    ["Correct the principal office state from \"AL\" to \"IL\" in the same filing","Justin Allen","Same filing"],
+    ["IRS Form 8822-B to change the responsible party and address","Justin Allen","Within 60 days"],
+    ["Move website, domain, email, payment, and social accounts to Justin","Isun and Justin","By the date in Schedule 1"],
+    ["Update business licenses and insurance","Justin Allen","When the filing is recorded"],
+    ["Tell the Building 4 Our Future Secretary in writing so Schedule A of the Conflict of Interest Policy and Isun's annual statement are updated","Isun Jones-Boler","Within 7 days"],
+    ["Store signed copies in the hub under Sun School, Ownership Transfer","Amir","After signing"],
+    ["Keep the signed originals in the Company's record book","Justin Allen","After signing"]
+  ];
+  $("afterBox").innerHTML = `<div class="after"><h4>AFTER SIGNING: FILINGS AND HOUSEKEEPING</h4><p class="small">Illinois does not record who owns an LLC, so the transfer itself needs no state filing. The signed papers are the proof. These steps keep the public record and your other records matching.</p><table><tr><th>STEP</th><th>WHO</th><th>WHEN</th></tr>${rows.map(r=>`<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td></tr>`).join("")}</table></div>`;
+}
+
+/* ---------- state / banner / status ---------- */
+function refreshState(){
+  renderDoc();
+  const ready = cfgReady(cfg);
+  const total = SIGNERS.length;
+  const done = SIGNERS.filter(s=>sigs[s.id]).length;
+  const any = done>0;
+
+  let st = `<h4>SIGNATURE STATUS — ${done} OF ${total} SIGNED</h4>`;
+  SIGNERS.forEach(s=>{
+    const r=sigs[s.id];
+    st += `<div class="srow"><span>${esc(signerName(s))} <span class="small">· ${esc(s.role)}</span></span>${r?`<span class="y">✓ SIGNED ${esc(r.dateText)}</span>`:`<span class="n">WAITING</span>`}</div>`;
+  });
+  if(any) st += `<div style="margin-top:10px"><button class="btn ghost" type="button" id="dlTop">Download ${done===total?"fully signed":"current"} PDF</button></div>`;
+  if(!fbReady) st += `<p class="small" style="margin:10px 0 0;color:#ffb86b">Shared storage isn't connected yet, so people can't see each other's signatures. Finish the Firebase step.</p>`;
+  if(netErr) st += `<p class="small" style="margin:10px 0 0;color:var(--bad)">${esc(netErr)}</p>`;
+  $("status").innerHTML = st;
+  const dt=$("dlTop"); if(dt) dt.onclick=downloadPDF;
+
+  const b=$("banner");
+  if(!ready){ b.className="banner warn"; b.innerHTML="<b>This packet has not been prepared yet.</b> Please contact Sun School of Satoshi."; }
+  else if(done===total){ b.className="banner good"; b.innerHTML="<b>Everyone has signed.</b> The packet is fully executed. You can download the signed PDF above."; }
+  else if(justDone){ b.className=""; b.innerHTML=""; }
+  else { b.className="banner"; b.innerHTML=`<b>Please review and sign.</b> Read all four parts below, then scroll to the signing box. ${done} of ${total} people have signed so far.`; }
+
+  const sel=$("signerSel"), cur=sel.value;
+  const pre = cfg && cfg.s && SIGNERS.some(x=>x.id===cfg.s) ? cfg.s : "";
+  sel.innerHTML = `<option value="">— choose your name —</option>` + SIGNERS.map(x=>`<option value="${x.id}" ${sigs[x.id]?"disabled":""}>${esc(signerName(x))}${sigs[x.id]?"  ✓ signed":""}</option>`).join("");
+  sel.value = pre || cur || "";
+  sel.disabled = !!pre;
+  updateConsent();
+
+  const preSigned = pre && sigs[pre];
+  const hide = justDone || preSigned || done===total;
+  $("signPanel").classList.toggle("hidden", !!hide);
+  if(preSigned && !justDone){ b.className="banner good"; b.innerHTML="<b>You have already signed this packet.</b> Thank you."; }
+  $("signBtn").disabled = !ready;
+}
+function updateConsent(){
+  const s=SIGNERS.find(x=>x.id===$("signerSel").value);
+  $("c1text").textContent = s ? s.consent : "I have read all four parts of this packet and I am signing freely.";
+}
+$("signerSel").addEventListener("change",updateConsent);
+
+/* ---------- signature capture ---------- */
+const pad=$("pad"), pctx=pad.getContext("2d");
+let drawing=false, drawn=false;
+pctx.lineWidth=4; pctx.lineCap="round"; pctx.lineJoin="round"; pctx.strokeStyle="#0b1a55";
+function pos(e){ const r=pad.getBoundingClientRect(); return {x:(e.clientX-r.left)*pad.width/r.width, y:(e.clientY-r.top)*pad.height/r.height}; }
+pad.addEventListener("pointerdown",e=>{ drawing=true; pad.setPointerCapture(e.pointerId); const p=pos(e); pctx.beginPath(); pctx.moveTo(p.x,p.y); pctx.lineTo(p.x+.1,p.y+.1); pctx.stroke(); drawn=true; });
+pad.addEventListener("pointermove",e=>{ if(!drawing) return; const p=pos(e); pctx.lineTo(p.x,p.y); pctx.stroke(); });
+["pointerup","pointercancel"].forEach(ev=>pad.addEventListener(ev,()=>{drawing=false;}));
+$("clearPad").onclick=()=>{ pctx.clearRect(0,0,pad.width,pad.height); drawn=false; };
+function setMode(m){ sigMode=m; $("tabType").classList.toggle("on",m==="type"); $("tabDraw").classList.toggle("on",m==="draw"); $("typeWrap").classList.toggle("hidden",m!=="type"); $("drawWrap").classList.toggle("hidden",m!=="draw"); }
+$("tabType").onclick=()=>setMode("type"); $("tabDraw").onclick=()=>setMode("draw");
+$("typedName").addEventListener("input",()=>{ $("typedPreview").textContent=$("typedName").value; });
+
+async function signatureSmall(){
+  const c=document.createElement("canvas"); c.width=300; c.height=84; const x=c.getContext("2d");
+  if(sigMode==="draw"){ x.drawImage(pad,0,0,300,84); return c.toDataURL("image/png"); }
+  try{ await document.fonts.load("56px 'Dancing Script'"); }catch(e){}
+  const big=document.createElement("canvas"); big.width=720; big.height=200; const g=big.getContext("2d");
+  g.fillStyle="#0b1a55"; g.textBaseline="middle"; let size=100; const txt=$("typedName").value.trim();
+  do{ g.font=`600 ${size}px 'Dancing Script', cursive`; size-=4; } while(g.measureText(txt).width>680 && size>24);
+  g.fillText(txt,18,105); x.drawImage(big,0,0,300,84); return c.toDataURL("image/png");
+}
+async function docFingerprint(){
+  const body = JSON.stringify({h:HEAD,b:blocks(cfg),c:cfg&&Object.assign({},cfg,{s:undefined})});
+  try{ const buf=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(body)); return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,"0")).join(""); }
+  catch(e){ return "unavailable"; }
+}
+
+/* ---------- PDF (all signatures collected so far) ---------- */
+function buildPDF(){
+  if(!window.jspdf) return null;
+  const doc=new window.jspdf.jsPDF({unit:"pt",format:"letter"});
+  const W=612,M=58; let y=64;
+  const need=h=>{ if(y+h>735){ doc.addPage(); y=64; } };
+  const para=(t,o={})=>{ const size=o.size||11; doc.setFont("times",o.bold?"bold":"normal"); doc.setFontSize(size);
+    doc.splitTextToSize(t,W-2*M-(o.indent||0)).forEach(l=>{ need(size+4); if(o.center) doc.text(l,W/2,y,{align:"center"}); else doc.text(l,M+(o.indent||0),y); y+=size*1.38; });
+    y+=(o.gap==null?6:o.gap); };
+  const c=cfg;
+  para(HEAD.org,{size:18,bold:true,center:true,gap:2});
+  para(HEAD.title,{size:13,bold:true,center:true,gap:2});
+  para(HEAD.sub,{size:10,center:true,gap:10});
+  para(HEAD.intro);
+  let n=0;
+  blocks(c).forEach(b=>{
+    if(b.t==="h"){ n=0; need(60); y+=6; para(b.x,{bold:true,size:13,gap:4}); }
+    else if(b.t==="h5"){ need(40); para(b.x,{bold:true,gap:3}); }
+    else if(b.t==="p") para(fillText(b.x,c));
+    else if(b.t==="li"){ n++; para(`${n}. ${b.b?b.b+" ":""}${fillText(b.x,c)}`,{indent:6}); }
+    else if(b.t==="chk") para(`${b.on?"[X]":"[  ]"} ${fillText(b.x,c)}`,{indent:24,gap:3});
+    else if(b.t==="tbl") b.rows.forEach(r=>para(r.map((x,i)=>`${b.head[i]}: ${fillText(x,c)}`).join("  |  "),{size:10,indent:6,gap:3}));
+    else if(b.t==="sig"){
+      const r=sigs[b.id]; need(72); doc.setFont("times","normal"); doc.setFontSize(10.5);
+      doc.text(fillText(b.who,c),M,y+12);
+      doc.line(M,y+46,M+330,y+46); doc.line(M+350,y+46,W-M,y+46);
+      if(r){ try{ doc.addImage(r.sigImage,"PNG",M+6,y+12,120,34); }catch(e){} doc.text(r.dateText,M+355,y+42); }
+      y+=66;
+    }
+  });
+  const recs=SIGNERS.filter(s=>sigs[s.id]);
+  const boxH=30+recs.length*24; need(boxH+20); y+=6; doc.setDrawColor(150); doc.rect(M,y,W-2*M,boxH);
+  doc.setFont("courier","bold"); doc.setFontSize(8.5); doc.text("ELECTRONIC SIGNATURE RECORD",M+8,y+13);
+  doc.setFont("courier","normal");
+  recs.forEach((s,i)=>{ const r=sigs[s.id]; const yy=y+27+i*24;
+    doc.text(`${r.name} (${r.role}) - ${r.method||""} signature, agreed to sign electronically`,M+8,yy);
+    doc.text(`Signed ${r.iso} UTC  |  Doc fingerprint ${String(r.hash||"").slice(0,24).toUpperCase()}`,M+8,yy+10.5); });
+  return doc;
+}
+function downloadPDF(){
+  const d=buildPDF(); if(!d){ window.print(); return; }
+  const k=SIGNERS.filter(s=>sigs[s.id]).length;
+  d.save(`Sun-School-Ownership-Transfer-${k===SIGNERS.length?"FULLY-SIGNED":"signed-"+k+"-of-"+SIGNERS.length}.pdf`);
+}
+$("dlBtn").onclick=downloadPDF;
+
+/* ---------- sign ---------- */
+$("signBtn").onclick=async()=>{
+  const err=$("err"); err.textContent="";
+  const id=$("signerSel").value;
+  if(!cfgReady(cfg)){ err.textContent="This packet isn't prepared yet."; return; }
+  if(!id){ err.textContent="Choose your name."; return; }
+  if(sigs[id]){ err.textContent="That person has already signed."; return; }
+  const email=$("signerEmail").value.trim();
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ err.textContent="Enter a valid email."; return; }
+  const S=SIGNERS.find(s=>s.id===id); const name=signerName(S);
+  if(sigMode==="type" && !$("typedName").value.trim()){ err.textContent="Type your signature."; return; }
+  if(sigMode==="draw" && !drawn){ err.textContent="Draw your signature."; return; }
+  if(!$("c1").checked || !$("c2").checked){ err.textContent="Please check both boxes to continue."; return; }
+
+  const btn=$("signBtn"); btn.disabled=true; btn.textContent="SIGNING…";
+  const now=new Date();
+  const sigImage=await signatureSmall();
+  const hash=await docFingerprint();
+  const rec={name,role:S.role,sigImage,dateText:todayStr(),iso:now.toISOString(),method:sigMode==="draw"?"drawn":"typed",hash};
+
+  let stored=false;
+  if(fbReady && db){
+    try{ await setDoc(doc(db,"packets",rid(),"signatures",id),rec); stored=true; }
+    catch(e){ console.error(e); err.textContent="Could not save your signature (it may already be signed, or the Firebase setup needs a check). Nothing was sent."; btn.disabled=false; btn.textContent="ADOPT & SIGN"; return; }
+  } else { sigs[id]=rec; }
+
+  let sent=false;
+  if(w3Ready){
+    try{
+      const r=await fetch("https://api.web3forms.com/submit",{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({
+        access_key:WEB3FORMS_KEY, subject:`SIGNED: Sun School Ownership Transfer Packet – ${name}`, from_name:"Sun School E-Sign", replyto:email,
+        signer_name:name, signer_role:rec.role, signer_email:email, signed_at_utc:rec.iso, signed_at_local:now.toLocaleString("en-US",{timeZoneName:"short"}),
+        signature_method:rec.method, electronic_consent:"Yes – agreed to sign electronically and confirmed they read all parts they sign",
+        company:"Sun School of Satoshi LLC (IL file 17329278)", effective_date:fmtDate(cfg.date), document_sha256:hash, signature_image_base64:sigImage, botcheck:""
+      })});
+      const j=await r.json(); sent=!!j.success;
+    }catch(e){}
+  }
+  justDone=true;
+  $("signPanel").classList.add("hidden"); $("donePanel").classList.remove("hidden");
+  ["st1","st2"].forEach(i=>$(i).className="step fin"); $("st3").className="step on";
+  let msg=`Thank you, ${esc(name)}. Your signature is now on every line of the packet that belongs to you.`;
+  if(!stored) msg+=` <span style="color:#ffb86b">(Shared storage isn't connected, so the next person won't see it yet.)</span>`;
+  if(w3Ready && !sent) msg+=`<br><span style="color:#ffb86b">The email copy didn't send. Please download the PDF and send it to the administrator.</span>`;
+  $("doneMsg").innerHTML=msg;
+  refreshState(); window.scrollTo({top:0,behavior:"smooth"});
+};
+
+/* ---------- administrator ---------- */
+const adminPanel=$("adminPanel");
+$("adminToggle").onclick=()=>{ adminPanel.classList.toggle("hidden"); if(!adminPanel.classList.contains("hidden")) adminPanel.scrollIntoView({behavior:"smooth"}); };
+if(/[?&]admin/.test(location.search)) adminPanel.classList.remove("hidden");
+$("aSch").innerHTML = SCH_ITEMS.map((it,i)=>`<div class="schrow"><span>${esc(it[0])}</span><input type="text" id="sch${i}a" placeholder="${esc(it[1])}"><input type="text" id="sch${i}b" placeholder="name"><input type="date" id="sch${i}c"></div>`).join("");
+{ const notes=[];
+  notes.push(w3Ready?"✓ Email copies are sent to the address your Web3Forms key is registered to.":"⚠ Email not connected: paste a Web3Forms key into <code>WEB3FORMS_KEY</code>.");
+  notes.push(fbReady?"✓ Shared storage connected: signers see earlier signatures.":"⚠ Shared storage not connected: paste your Firebase details into <code>FIREBASE_CONFIG</code> (rules are in the comment at the top of the script).");
+  $("aKeyNote").innerHTML=notes.join("<br>"); }
+const togglePrice=()=>{ const v=$("aPrice").value; $("aPayWrap").classList.toggle("hidden",v!=="pay"); $("aOtherWrap").classList.toggle("hidden",v!=="other"); };
+$("aPrice").onchange=togglePrice;
+const F=["Date:aDate","price:aPrice","amount:aAmount","payDate:aPayDate","method:aMethod","other:aOther","isunAddr:aIsunAddr","justinAddr:aJustinAddr","debts:aDebts","office:aOffice","profits:aProfits","acctDate:aAcctDate","days1:aDays1","days2:aDays2","owed:aOwed","keep:aKeep","lic:aLic"].map(x=>{const [k,i]=x.split(":");return [k==="Date"?"date":k,i];});
+function fillAdmin(){
+  const c=cfg||DEFAULT_CFG;
+  F.forEach(([k,i])=>{ $(i).value = c[k]!=null?c[k]:""; });
+  (c.sch||DEFAULT_CFG.sch).forEach((r,i)=>{ $("sch"+i+"a").value=r[0]||""; $("sch"+i+"b").value=r[1]||""; $("sch"+i+"c").value=r[2]||""; });
+  togglePrice();
+}
+$("aBuild").onclick=()=>{
+  const e=$("aErr"); e.textContent="";
+  const c={id:(cfg&&cfg.id)||rid8()};
+  F.forEach(([k,i])=>{ c[k]=$(i).value.trim(); });
+  c.sch=SCH_ITEMS.map((_,i)=>[$("sch"+i+"a").value.trim(),$("sch"+i+"b").value.trim(),$("sch"+i+"c").value]);
+  if(!cfgReady(c)){ e.textContent="Fill in the effective date, price option (with its details), both addresses, and the principal office / registered agent address."; return; }
+  const base=location.href.split("#")[0].split("?")[0];
+  let h = location.protocol==="file:"?`<p class="small" style="color:#ffb86b">You opened this from your computer. Upload the file online first, open it there, and create the links again.</p>`:"";
+  const mk=(label,sid)=>{ const link=base+"#d="+b64e(Object.assign({},c,sid?{s:sid}:{})); return `<div class="linkrow"><span>${esc(label)}</span><input type="text" readonly value="${esc(link)}" onclick="this.select()"><button class="btn ghost" type="button" data-copy="${esc(link)}">Copy</button></div>`; };
+  SIGNERS.forEach(s=>{ h+=mk(s.name,s.id); });
+  $("aLinks").innerHTML=h;
+  $("aLinks").querySelectorAll("[data-copy]").forEach(b=>b.onclick=()=>{ navigator.clipboard.writeText(b.dataset.copy).then(()=>{b.textContent="Copied ✓";setTimeout(()=>b.textContent="Copy",1500);}); });
+  cfg=Object.assign({},c); listen(); refreshState();
+};
+
+/* ---------- boot ---------- */
+afterHtml(); loadCfg(); fillAdmin(); listen(); refreshState();
+window.addEventListener("hashchange",()=>{ justDone=false; loadCfg(); fillAdmin(); listen(); refreshState(); });
+</script>
+</body>
+</html>
